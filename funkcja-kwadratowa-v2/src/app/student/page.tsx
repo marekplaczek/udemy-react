@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAppUser } from "@/lib/auth";
 import { getStudentProgress } from "@/lib/progress";
+import { STAGES } from "@/features/quadratic/content";
 
 export const dynamic = "force-dynamic";
 
@@ -21,17 +22,24 @@ export default async function StudentPage() {
           <h1 className="section-title">Twój program</h1>
           <p className="muted">Poziom jest wyliczany na serwerze. Zaliczenie wymaga kompletu poprawnych odpowiedzi.</p>
           <div className="stage-list">
-            {progress.stages.map((stage) => (
-              <div className="stage" key={stage.stageId}>
-                <div><strong>Etap {stage.stageId}</strong><div className="muted">Próby: {stage.attempts} · najlepszy wynik: {stage.bestScore}%</div></div>
-                <div className="actions" style={{ marginTop: 0 }}>
-                  <span className={`badge ${stage.status === "PASSED" ? "badge-passed" : stage.status === "IN_PROGRESS" ? "badge-current" : "badge-locked"}`}>
-                    {stage.status === "PASSED" ? "zaliczony" : stage.status === "IN_PROGRESS" ? "aktualny" : "zablokowany"}
-                  </span>
-                  {stage.stageId === 1 && stage.status !== "LOCKED" ? <Link className="btn" href={`/student/stage/${stage.stageId}`}>{stage.status === "PASSED" ? "Powtórz" : "Rozpocznij"}</Link> : null}
+            {progress.stages.map((stage) => {
+              const meta = STAGES[stage.stageId - 1];
+              return (
+                <div className="stage" key={stage.stageId}>
+                  <div>
+                    <strong>Etap {stage.stageId}. {meta.title}</strong>
+                    <div className="muted">{meta.subtitle}</div>
+                    <div className="muted">Próby: {stage.attempts} · najlepszy wynik: {stage.bestScore}%</div>
+                  </div>
+                  <div className="actions" style={{ marginTop: 0 }}>
+                    <span className={`badge ${stage.status === "PASSED" ? "badge-passed" : stage.status === "IN_PROGRESS" ? "badge-current" : "badge-locked"}`}>
+                      {stage.status === "PASSED" ? "zaliczony" : stage.status === "IN_PROGRESS" ? "aktualny" : "zablokowany"}
+                    </span>
+                    {stage.status !== "LOCKED" ? <Link className="btn" href={`/student/stage/${stage.stageId}`}>{stage.status === "PASSED" ? "Powtórz" : "Rozpocznij"}</Link> : null}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
         {user.role === "TEACHER" || user.role === "ADMIN" ? <div className="actions"><Link className="btn" href="/teacher">Przejdź do panelu nauczyciela</Link></div> : null}
