@@ -25,6 +25,8 @@ button, input { font: inherit; }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
 .btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; padding: 11px 16px; border: 1px solid var(--line); background: white; font-weight: 700; cursor: pointer; }
 .btn:hover { border-color: #a78bfa; }
+.topbar .btn { background: rgb(255 255 255 / .10); color: #fff; border-color: rgb(255 255 255 / .28); }
+.topbar .btn:hover { background: rgb(255 255 255 / .18); border-color: rgb(255 255 255 / .55); }
 .btn:disabled { cursor: default; opacity: .6; }
 .btn-primary { background: var(--violet); color: white; border-color: var(--violet); }
 .full-btn { width: 100%; margin-top: 20px; }
