@@ -1,5 +1,5 @@
-import { SignUp } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
-export default function SignUpPage() {
-  return <main className="auth-wrap"><SignUp fallbackRedirectUrl="/student" /></main>;
+export default function LegacySignUpPage() {
+  redirect("/auth/sign-up");
 }

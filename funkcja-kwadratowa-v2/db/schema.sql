@@ -1,8 +1,6 @@
-create extension if not exists pgcrypto;
-
 create table if not exists app_users (
   id bigserial primary key,
-  clerk_user_id text not null unique,
+  auth_user_id uuid not null unique references neon_auth."user"(id) on delete cascade,
   email text,
   display_name text not null,
   role text not null default 'STUDENT' check (role in ('STUDENT','TEACHER','ADMIN')),
@@ -44,7 +42,20 @@ create table if not exists quiz_attempts (
   created_at timestamptz not null default now()
 );
 
+create table if not exists quiz_answers (
+  id bigserial primary key,
+  attempt_id bigint not null references quiz_attempts(id) on delete cascade,
+  question_key text,
+  question_text text not null,
+  skill text,
+  student_answer text,
+  correct_answer text,
+  is_correct boolean not null,
+  created_at timestamptz not null default now()
+);
+
 create index if not exists idx_classes_teacher on classes(teacher_user_id);
 create index if not exists idx_class_students_student on class_students(student_user_id);
 create index if not exists idx_progress_activity on student_progress(last_activity desc);
 create index if not exists idx_attempts_student_created on quiz_attempts(student_user_id, created_at desc);
+create index if not exists idx_quiz_answers_attempt on quiz_answers(attempt_id);

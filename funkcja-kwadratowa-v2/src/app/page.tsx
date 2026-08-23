@@ -1,13 +1,17 @@
 import Link from "next/link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { auth } from "@/lib/auth/server";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const { user } = await auth.getSession();
+
   return (
     <>
       <header className="topbar">
         <div className="topbar-inner">
           <div className="brand"><small>Matematyka · poziom rozszerzony</small><strong>Funkcja kwadratowa 2.0</strong></div>
-          <SignedIn><UserButton /></SignedIn>
+          {user ? <Link className="btn" href="/auth/sign-out">Wyloguj</Link> : null}
         </div>
       </header>
       <main className="shell">
@@ -15,14 +19,17 @@ export default function HomePage() {
           <h1>Nauka z postępem zapisanym na serwerze</h1>
           <p>Nowa wersja zachowuje siedem etapów nauki, ale dodaje konta uczniów, serwerowy poziom oraz panel nauczyciela do kontroli wyników.</p>
           <div className="actions">
-            <SignedOut>
-              <Link className="btn btn-primary" href="/sign-in">Zaloguj się</Link>
-              <Link className="btn" href="/sign-up">Utwórz konto</Link>
-            </SignedOut>
-            <SignedIn>
-              <Link className="btn btn-primary" href="/student">Panel ucznia</Link>
-              <Link className="btn" href="/teacher">Panel nauczyciela</Link>
-            </SignedIn>
+            {!user ? (
+              <>
+                <Link className="btn btn-primary" href="/auth/sign-in">Zaloguj się</Link>
+                <Link className="btn" href="/auth/sign-up">Utwórz konto</Link>
+              </>
+            ) : (
+              <>
+                <Link className="btn btn-primary" href="/student">Panel ucznia</Link>
+                <Link className="btn" href="/teacher">Panel nauczyciela</Link>
+              </>
+            )}
           </div>
         </section>
         <section className="grid grid-3">

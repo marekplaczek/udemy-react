@@ -1,5 +1,5 @@
-import { SignIn } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
-export default function SignInPage() {
-  return <main className="auth-wrap"><SignIn fallbackRedirectUrl="/student" /></main>;
+export default function LegacySignInPage() {
+  redirect("/auth/sign-in");
 }

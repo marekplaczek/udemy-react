@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 import { requireTeacher } from "@/lib/auth";
 import { getTeacherStudents } from "@/lib/progress";
+
+export const dynamic = "force-dynamic";
 
 function dateLabel(value: string | null) {
   if (!value) return "—";
@@ -14,12 +15,12 @@ export default async function TeacherPage() {
 
   return (
     <>
-      <header className="topbar"><div className="topbar-inner"><div className="brand"><small>Panel nauczyciela</small><strong>{teacher.display_name}</strong></div><UserButton /></div></header>
+      <header className="topbar"><div className="topbar-inner"><div className="brand"><small>Panel nauczyciela</small><strong>{teacher.display_name}</strong></div><Link className="btn" href="/auth/sign-out">Wyloguj</Link></div></header>
       <main className="shell">
         <h1 className="section-title">Postępy uczniów</h1>
         <p className="muted">Widzisz wyłącznie uczniów przypisanych do Twoich klas.</p>
         {students.length === 0 ? (
-          <div className="empty" style={{ marginTop: 20 }}>Brak przypisanych uczniów. Utwórz klasę i przypisz uczniów w bazie — w następnym kroku dodamy obsługę tego bezpośrednio z panelu.</div>
+          <div className="empty" style={{ marginTop: 20 }}>Brak przypisanych uczniów. Następny etap prac doda tworzenie klas i zapraszanie uczniów bezpośrednio z panelu.</div>
         ) : (
           <div className="card table-wrap" style={{ marginTop: 20 }}>
             <table>

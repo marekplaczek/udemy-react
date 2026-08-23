@@ -1,26 +1,25 @@
 # Funkcja kwadratowa 2.0
 
-MVP nowej wersji aplikacji: Next.js 16 + Clerk + Neon PostgreSQL.
+MVP nowej wersji aplikacji: Next.js 16 + Neon Auth + Neon PostgreSQL.
 
-## Co jest gotowe
+## Stan
 
-- logowanie i rejestracja użytkowników przez Clerk,
-- role `STUDENT`, `TEACHER`, `ADMIN`,
-- automatyczne utworzenie rekordu użytkownika po pierwszym wejściu,
-- serwerowy odczyt aktualnego poziomu i siedmiu etapów,
-- endpoint `GET /api/me/progress`,
+- Neon Auth jest warstwą logowania i sesji,
+- konto aplikacyjne jest wiązane z `neon_auth.user`,
+- poziom ucznia i postęp są odczytywane z PostgreSQL po stronie serwera,
+- role: `STUDENT`, `TEACHER`, `ADMIN`,
 - model klas i przypisywania uczniów,
 - panel nauczyciela z poziomem, liczbą prób i ostatnią aktywnością,
-- szczegóły ucznia i historia prób quizów.
+- szczegóły ucznia i historia prób,
+- tabela odpowiedzi do późniejszej analizy błędów i umiejętności.
 
-## Konfiguracja
+## Zmienne środowiskowe
 
-1. Utwórz aplikację Clerk i ustaw `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` oraz `CLERK_SECRET_KEY`.
-2. Utwórz PostgreSQL (rekomendowany Neon na Vercel Marketplace) i ustaw `DATABASE_URL`.
-3. Uruchom `db/schema.sql` na bazie.
-4. W `TEACHER_EMAILS` wpisz adresy nauczycieli oddzielone przecinkami. Konto z takim adresem przy logowaniu otrzyma rolę `TEACHER`.
-5. Ustaw ścieżki Clerk: `/sign-in` i `/sign-up`.
+- `DATABASE_URL`
+- `NEON_AUTH_BASE_URL`
+- `NEON_AUTH_COOKIE_SECRET` — min. 32 znaki
+- `TEACHER_EMAILS` — opcjonalna lista adresów nauczycieli oddzielona przecinkami
 
 ## Następny krok
 
-Przenieść obecny silnik siedmiu etapów do `src/features/quadratic/`, a generowanie i weryfikację odpowiedzi rozdzielić tak, aby poprawna odpowiedź nie była źródłem prawdy w przeglądarce. Po zaliczeniu serwer zapisze `quiz_attempts` i zaktualizuje `student_progress`.
+Przenieść silnik 7 etapów z wersji 1 do `src/features/quadratic/` i dodać serwerowy endpoint zapisu próby quizu. To endpoint ma wyliczać zaliczenie, aktualizować `student_progress` i zapisywać `quiz_answers`.

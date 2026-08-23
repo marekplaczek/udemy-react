@@ -1,11 +1,7 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth/server";
 
-export default clerkMiddleware();
+export default auth.middleware({ loginUrl: "/auth/sign-in" });
 
 export const config = {
-  matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
-    "/__clerk/(.*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

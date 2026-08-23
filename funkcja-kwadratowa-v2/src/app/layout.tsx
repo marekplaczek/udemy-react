@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
+import "@neondatabase/auth-ui/css";
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Funkcja kwadratowa — nauka i postępy",
@@ -9,10 +10,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
-      <html lang="pl">
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
+    <html lang="pl">
+      <body><Providers>{children}</Providers></body>
+    </html>
   );
 }
