@@ -10,7 +10,7 @@ export const M = (n: number) => n < 0 ? "−" + Math.abs(n) : String(n);
 export const par = (n: number) => n < 0 ? `(${M(n)})` : String(n);
 export function quad(a: number, b: number, c: number, v = "x") { let s = a === 1 ? "" : a === -1 ? "−" : M(a); s += `${v}²`; if (b) s += (b > 0 ? " + " : " − ") + (Math.abs(b) === 1 ? "" : Math.abs(b)) + v; if (c) s += (c > 0 ? " + " : " − ") + Math.abs(c); return s; }
 export function canon(a: number, p: number, q: number) { let s = a === 1 ? "" : a === -1 ? "−" : M(a); s += p === 0 ? "x²" : `(x ${p > 0 ? "− " : "+ "}${Math.abs(p)})²`; if (q) s += (q > 0 ? " + " : " − ") + Math.abs(q); return s; }
-export function factored(a: number, x1: number, x2: number) { let s = a === 1 ? "" : a === -1 ? "−" : M(a); const f = (r: number) => r === 0 ? "x" : `(x ${r > 0 ? "− " : "+ "}${Math.abs(r)})`; return s + f(x1) + f(x2); }
+export function factored(a: number, x1: number, x2: number) { const s = a === 1 ? "" : a === -1 ? "−" : M(a); const f = (r: number) => r === 0 ? "x" : `(x ${r > 0 ? "− " : "+ "}${Math.abs(r)})`; return s + f(x1) + f(x2); }
 const gcd = (a: number, b: number): number => b ? gcd(b, a % b) : Math.abs(a);
 export function fracStr(n: number, d: number) { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d) || 1; n /= g; d /= g; return d === 1 ? M(n) : `${M(n)}/${d}`; }
 export function mkPQ() { const a = RNZ(-3, 3), p = R(-5, 5), q = R(-7, 7); return { a, p, q, b: -2 * a * p, c: a * p * p + q }; }
