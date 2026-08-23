@@ -1,0 +1,44 @@
+name: Funkcja kwadratowa v2 CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "funkcja-kwadratowa-v2/**"
+      - ".github/workflows/funkcja-kwadratowa-v2-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: funkcja-kwadratowa-v2
+    env:
+      DATABASE_URL: postgresql://user:password@localhost:5432/example
+      NEON_AUTH_BASE_URL: https://example.com/auth
+      NEON_AUTH_COOKIE_SECRET: ci-only-cookie-secret-at-least-32-characters-long
+      TEACHER_EMAILS: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: funkcja-kwadratowa-v2/package-lock.json
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Package source for deployment verification
+        if: success()
+        run: zip -r ../funkcja-kwadratowa-v2-source.zip . -x "node_modules/*" ".next/*"
+      - name: Upload source artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: funkcja-kwadratowa-v2-source
+          path: funkcja-kwadratowa-v2-source.zip
+          retention-days: 1
