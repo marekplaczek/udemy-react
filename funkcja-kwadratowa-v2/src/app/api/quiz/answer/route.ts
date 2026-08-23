@@ -10,7 +10,9 @@ export async function POST(request: Request) {
   const questionId = String(body.questionId ?? "");
   const answer = String(body.answer ?? "");
 
-  if (!sessionId || !questionId) return Response.json({ error: "Brak identyfikatora sesji lub pytania." }, { status: 400 });
+  if (!sessionId || !questionId) {
+    return Response.json({ error: "Brak identyfikatora sesji lub pytania." }, { status: 400 });
+  }
 
   const rows = await sql`
     select q.id, q.question_type, q.correct_answer, q.solution, q.answered_at, s.stage_id
@@ -22,19 +24,30 @@ export async function POST(request: Request) {
       and s.status = 'ACTIVE'
     limit 1
   `;
-  if (!rows.length) return Response.json({ error: "Nie znaleziono aktywnego pytania." }, { status: 404 });
+  if (!rows.length) {
+    return Response.json({ error: "Nie znaleziono aktywnego pytania." }, { status: 404 });
+  }
+
   const question = rows[0];
-  if (question.answered_at) return Response.json({ error: "Na to pytanie już udzielono odpowiedzi." }, { status: 409 });
+  if (question.answered_at) {
+    return Response.json({ error: "Na to pytanie już udzielono odpowiedzi." }, { status: 409 });
+  }
 
   const stageId = Number(question.stage_id);
   const type = String(question.question_type) as "input" | "choice";
   const correct = isAnswerCorrect(type, answer, String(question.correct_answer));
 
-  await sql`
+  const saved = await sql`
     update quiz_session_questions
     set student_answer = ${answer}, is_correct = ${correct}, answered_at = now()
-    where id = ${questionId} and answered_at is null
+    where id = ${questionId}
+      and session_id = ${sessionId}
+      and answered_at is null
+    returning id
   `;
+  if (!saved.length) {
+    return Response.json({ error: "Na to pytanie już udzielono odpowiedzi." }, { status: 409 });
+  }
 
   const summaryRows = await sql`
     select
