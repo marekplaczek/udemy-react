@@ -42,7 +42,11 @@ export default async function StudentPage() {
             })}
           </div>
         </section>
-        {user.role === "TEACHER" || user.role === "ADMIN" ? <div className="actions"><Link className="btn" href="/teacher">Przejdź do panelu nauczyciela</Link></div> : null}
+        <div className="actions">
+          {user.role === "TEACHER" || user.role === "ADMIN"
+            ? <Link className="btn" href="/teacher">Przejdź do panelu nauczyciela</Link>
+            : <Link className="btn" href="/teacher/activate">Aktywuj konto nauczyciela</Link>}
+        </div>
       </main>
     </>
   );
