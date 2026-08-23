@@ -1,15 +1,15 @@
 import { requireAppUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { getStudentProgress } from "@/lib/progress";
-import { answerToStorage, buildStage1Quiz } from "@/features/quadratic/server/stage1";
+import { answerToStorage, buildQuizForStage } from "@/features/quadratic/server";
 
 export async function POST(request: Request) {
   const user = await requireAppUser();
   const body = await request.json().catch(() => ({}));
   const stageId = Number(body.stageId);
 
-  if (stageId !== 1) {
-    return Response.json({ error: "Ten etap nie został jeszcze przeniesiony do wersji serwerowej." }, { status: 501 });
+  if (!Number.isInteger(stageId) || stageId < 1 || stageId > 7) {
+    return Response.json({ error: "Nieprawidłowy etap." }, { status: 400 });
   }
 
   const progress = await getStudentProgress(user.id);
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     returning id
   `;
   const sessionId = String(sessions[0].id);
-  const generated = buildStage1Quiz(6);
+  const generated = buildQuizForStage(stageId, 6);
   const questions = [];
 
   for (let index = 0; index < generated.length; index++) {
