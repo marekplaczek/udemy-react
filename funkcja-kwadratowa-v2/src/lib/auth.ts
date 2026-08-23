@@ -21,8 +21,13 @@ function isTeacherEmail(email: string | null) {
   return configured.includes(email.toLowerCase());
 }
 
+export async function getSessionUser() {
+  const { data } = await auth.getSession();
+  return data?.user ?? null;
+}
+
 export async function requireAppUser(): Promise<AppUser> {
-  const { user } = await auth.getSession();
+  const user = await getSessionUser();
   if (!user) redirect("/auth/sign-in");
 
   const email = user.email ?? null;
