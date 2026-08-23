@@ -1,0 +1,14 @@
+import type { GeneratedQuestion } from "./stage1";
+import { Generator, M, par, quad, canon, mkPQ, mkPQd, RNZ, R, shuffle, uniq } from "./shared";
+
+const G2: Generator[] = [
+  () => { const { a, p, b, c } = mkPQ(); return { key: "stage2.vertex-p", q: "Podaj pierwszą współrzędną wierzchołka paraboli (liczbę p).", expr: `f(x) = ${quad(a, b, c)}`, type: "input", ans: p, skill: "wierzcholek-p", solution: `p = −b/(2a) = −${par(b)}/(2·${par(a)}) = ${M(p)}.` }; },
+  () => { const { a, p, q, b, c } = mkPQ(); return { key: "stage2.vertex-q", q: "Podaj drugą współrzędną wierzchołka paraboli (liczbę q).", expr: `f(x) = ${quad(a, b, c)}`, type: "input", ans: q, skill: "wierzcholek-q", solution: `p = ${M(p)}, więc q = f(p) = ${M(q)}.` }; },
+  () => { const { a, p, q, b, c } = mkPQd(); const good = canon(a, p, q); return { key: "stage2.canonical", q: "Wskaż postać kanoniczną tej funkcji.", expr: `f(x) = ${quad(a, b, c)}`, type: "choice", options: shuffle(uniq([good, canon(a, -p, q), canon(a, p, -q), canon(-a, p, q)])), ans: good, skill: "postac-kanoniczna", solution: `Wierzchołek to (${M(p)}, ${M(q)}), zatem f(x) = ${good}.` }; },
+  () => { const { a, p, q, b, c } = mkPQ(); return { key: "stage2.extreme", q: `Podaj ${a > 0 ? "najmniejszą" : "największą"} wartość funkcji.`, expr: `f(x) = ${quad(a, b, c)}`, type: "input", ans: q, skill: "ekstremum", solution: `Wartość ekstremalna to q = ${M(q)}, osiągana dla x = ${M(p)}.` }; },
+  () => { const { a, p, b, c } = mkPQ(); return { key: "stage2.axis", q: "Podaj równanie osi symetrii w postaci x = ... (wpisz samą liczbę).", expr: `f(x) = ${quad(a, b, c)}`, type: "input", ans: p, skill: "os-symetrii", solution: `Oś symetrii przechodzi przez wierzchołek: x = ${M(p)}.` }; },
+  () => { let a: number, p: number, q: number; do { a = RNZ(-3, 3); p = RNZ(-4, 4); q = RNZ(-5, 5); } while (p === q || p === -q); const good = `[${M(p)}, ${M(q)}]`; return { key: "stage2.shift", q: `Wykres funkcji g powstał przez przesunięcie wykresu y = ${a === 1 ? "" : a === -1 ? "−" : M(a)}x². Podaj wektor przesunięcia.`, expr: `g(x) = ${canon(a, p, q)}`, type: "choice", options: shuffle(uniq([good, `[${M(-p)}, ${M(-q)}]`, `[${M(q)}, ${M(p)}]`, `[${M(-p)}, ${M(q)}]`])), ans: good, skill: "przesuniecie", solution: `Postać a(x − p)² + q oznacza przesunięcie o [p, q] = ${good}.` }; },
+  () => { const a = RNZ(-3, 3), p = R(-4, 4), q = R(-6, 6); const c = a * p * p + q; return { key: "stage2.canonical-to-general", q: "Zamień postać kanoniczną na ogólną i podaj wyraz wolny c.", expr: `f(x) = ${canon(a, p, q)}`, type: "input", ans: c, skill: "kanoniczna-ogolna", solution: `c = f(0) = ${M(c)}. Postać ogólna: ${quad(a, -2 * a * p, c)}.` }; },
+];
+
+export function buildStage2Quiz(count = 6): GeneratedQuestion[] { return shuffle(G2).slice(0, Math.min(count, G2.length)).map((g) => g()); }
