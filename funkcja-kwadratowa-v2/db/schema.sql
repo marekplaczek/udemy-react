@@ -1,3 +1,5 @@
+create extension if not exists pgcrypto;
+
 create table if not exists app_users (
   id bigserial primary key,
   auth_user_id uuid not null unique references neon_auth."user"(id) on delete cascade,
@@ -7,18 +9,21 @@ create table if not exists app_users (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
 create table if not exists classes (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   teacher_user_id bigint not null references app_users(id) on delete cascade,
   created_at timestamptz not null default now()
 );
+
 create table if not exists class_students (
   class_id uuid not null references classes(id) on delete cascade,
   student_user_id bigint not null references app_users(id) on delete cascade,
   joined_at timestamptz not null default now(),
   primary key (class_id, student_user_id)
 );
+
 create table if not exists student_progress (
   student_user_id bigint not null references app_users(id) on delete cascade,
   stage_id smallint not null check (stage_id between 1 and 7),
@@ -29,6 +34,7 @@ create table if not exists student_progress (
   last_activity timestamptz,
   primary key (student_user_id, stage_id)
 );
+
 create table if not exists quiz_attempts (
   id bigserial primary key,
   student_user_id bigint not null references app_users(id) on delete cascade,
@@ -37,6 +43,7 @@ create table if not exists quiz_attempts (
   max_score smallint not null check (max_score > 0),
   created_at timestamptz not null default now()
 );
+
 create table if not exists quiz_answers (
   id bigserial primary key,
   attempt_id bigint not null references quiz_attempts(id) on delete cascade,
@@ -48,6 +55,7 @@ create table if not exists quiz_answers (
   is_correct boolean not null,
   created_at timestamptz not null default now()
 );
+
 create table if not exists quiz_sessions (
   id uuid primary key default gen_random_uuid(),
   student_user_id bigint not null references app_users(id) on delete cascade,
@@ -56,6 +64,7 @@ create table if not exists quiz_sessions (
   created_at timestamptz not null default now(),
   completed_at timestamptz
 );
+
 create table if not exists quiz_session_questions (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references quiz_sessions(id) on delete cascade,
@@ -73,10 +82,22 @@ create table if not exists quiz_session_questions (
   answered_at timestamptz,
   unique (session_id, ordinal)
 );
+
+create table if not exists teacher_activation_codes (
+  id bigserial primary key,
+  code_hash text not null unique,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  used_by bigint references app_users(id),
+  used_at timestamptz
+);
+
 create index if not exists idx_classes_teacher on classes(teacher_user_id);
+create unique index if not exists idx_classes_teacher_name on classes(teacher_user_id, lower(name));
 create index if not exists idx_class_students_student on class_students(student_user_id);
 create index if not exists idx_progress_activity on student_progress(last_activity desc);
 create index if not exists idx_attempts_student_created on quiz_attempts(student_user_id, created_at desc);
 create index if not exists idx_quiz_answers_attempt on quiz_answers(attempt_id);
+create index if not exists idx_quiz_answers_skill on quiz_answers(skill, is_correct);
 create index if not exists idx_quiz_sessions_student on quiz_sessions(student_user_id, created_at desc);
 create index if not exists idx_quiz_session_questions_session on quiz_session_questions(session_id, ordinal);
