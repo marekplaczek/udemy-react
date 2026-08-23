@@ -54,6 +54,17 @@ th { color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing:
 .formula { font: 20px/1.4 Georgia, serif; text-align: center; color: #3b0764; background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 12px; padding: 13px 16px; margin: 10px 0; overflow-x: auto; }
 .note { margin-top: 18px; padding: 14px 16px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 8px; color: #78350f; }
 .example { margin-top: 14px; padding: 14px 16px; background: #f1f5f9; border-radius: 10px; color: #334155; }
+.parabola-card { margin: 0 0 20px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.parabola-svg { display: block; width: 100%; height: auto; max-height: 420px; }
+.parabola-bg { fill: #f8fafc; }
+.parabola-grid { stroke: #e2e8f0; stroke-width: 1; }
+.parabola-axis { stroke: #94a3b8; stroke-width: 1.7; }
+.parabola-curve { fill: none; stroke: #4c1d95; stroke-width: 3.1; stroke-linecap: round; stroke-linejoin: round; }
+.parabola-root { fill: #fff; stroke: #4c1d95; stroke-width: 2.4; }
+.parabola-vertex { fill: #d97706; stroke: #fff; stroke-width: 1.5; }
+.parabola-label { fill: #475569; font-size: 12px; font-family: Arial, Helvetica, sans-serif; }
+.parabola-vertex-label { fill: #92400e; font-size: 13px; font-family: Arial, Helvetica, sans-serif; font-weight: 700; }
+.parabola-caption { padding: 10px 14px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 13px; line-height: 1.45; }
 .skill-grid { display: grid; gap: 10px; }
 .skill-row { display: grid; grid-template-columns: minmax(180px, 1fr) 120px 70px; gap: 12px; align-items: center; }
 .skill-bar { height: 9px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
@@ -64,4 +75,6 @@ th { color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing:
   .topbar-inner { align-items: flex-start; }
   .stage { align-items: flex-start; flex-direction: column; }
   .skill-row { grid-template-columns: 1fr; gap: 5px; }
+  .parabola-svg { min-height: 220px; }
+  .parabola-caption { font-size: 12px; }
 }
