@@ -53,6 +53,18 @@ export async function getStudentProgress(studentUserId: number) {
   return { currentLevel, completed, passedStages, stages };
 }
 
+export async function getTeacherClasses(teacherUserId: number) {
+  const rows = await sql`
+    select c.id, c.name, count(cs.student_user_id)::int as student_count
+    from classes c
+    left join class_students cs on cs.class_id = c.id
+    where c.teacher_user_id = ${teacherUserId}
+    group by c.id, c.name
+    order by c.name
+  `;
+  return rows.map((row) => ({ id: String(row.id), name: String(row.name), studentCount: Number(row.student_count ?? 0) }));
+}
+
 export async function getTeacherStudents(teacherUserId: number) {
   const rows = await sql`
     select
@@ -109,6 +121,26 @@ export async function getTeacherStudentDetail(teacherUserId: number, studentUser
     order by created_at desc
     limit 20
   `;
+  const skillRows = await sql`
+    select qa.skill,
+           count(*)::int as total,
+           count(*) filter (where qa.is_correct = true)::int as correct
+    from quiz_answers qa
+    join quiz_attempts a on a.id = qa.attempt_id
+    where a.student_user_id = ${studentUserId}
+      and qa.skill is not null
+    group by qa.skill
+    order by (count(*) filter (where qa.is_correct = true))::numeric / nullif(count(*), 0), count(*) desc
+  `;
+  const wrongRows = await sql`
+    select a.stage_id, a.created_at, qa.question_text, qa.skill, qa.student_answer, qa.correct_answer
+    from quiz_answers qa
+    join quiz_attempts a on a.id = qa.attempt_id
+    where a.student_user_id = ${studentUserId}
+      and qa.is_correct = false
+    order by a.created_at desc, qa.id desc
+    limit 20
+  `;
 
   return {
     student: {
@@ -124,6 +156,19 @@ export async function getTeacherStudentDetail(teacherUserId: number, studentUser
       score: Number(row.score),
       maxScore: Number(row.max_score),
       createdAt: String(row.created_at),
+    })),
+    skills: skillRows.map((row) => {
+      const total = Number(row.total);
+      const correct = Number(row.correct);
+      return { skill: String(row.skill), total, correct, accuracy: total ? Math.round((correct * 100) / total) : 0 };
+    }),
+    recentWrongAnswers: wrongRows.map((row) => ({
+      stageId: Number(row.stage_id),
+      createdAt: String(row.created_at),
+      questionText: String(row.question_text),
+      skill: row.skill ? String(row.skill) : null,
+      studentAnswer: row.student_answer ? String(row.student_answer) : "—",
+      correctAnswer: String(row.correct_answer),
     })),
   };
 }
