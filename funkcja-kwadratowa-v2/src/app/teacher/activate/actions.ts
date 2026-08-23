@@ -14,15 +14,24 @@ export async function activateTeacher(formData: FormData) {
   const codeHash = createHash("sha256").update(code).digest("hex");
 
   const rows = await sql`
-    update teacher_activation_codes
-    set active = false, used_by = ${user.id}, used_at = now()
-    where code_hash = ${codeHash}
-      and active = true
-      and used_by is null
+    with claimed_code as (
+      update teacher_activation_codes
+      set active = false, used_by = ${user.id}, used_at = now()
+      where code_hash = ${codeHash}
+        and active = true
+        and used_by is null
+      returning id
+    )
+    update app_users
+    set role = 'TEACHER', updated_at = now()
+    where id = ${user.id}
+      and exists (select 1 from claimed_code)
     returning id
   `;
-  if (!rows.length) redirect("/teacher/activate?error=Kod%20jest%20nieprawidłowy%20lub%20został%20już%20wykorzystany.");
 
-  await sql`update app_users set role = 'TEACHER', updated_at = now() where id = ${user.id}`;
+  if (!rows.length) {
+    redirect("/teacher/activate?error=Kod%20jest%20nieprawidłowy%20lub%20został%20już%20wykorzystany.");
+  }
+
   redirect("/teacher?notice=Konto%20nauczyciela%20zostało%20aktywowane.");
 }
