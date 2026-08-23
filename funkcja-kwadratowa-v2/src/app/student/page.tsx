@@ -19,14 +19,17 @@ export default async function StudentPage() {
         </div>
         <section style={{ marginTop: 24 }} className="card">
           <h1 className="section-title">Twój program</h1>
-          <p className="muted">Poziom jest wyliczany na serwerze z zaliczonych etapów.</p>
+          <p className="muted">Poziom jest wyliczany na serwerze. Zaliczenie wymaga kompletu poprawnych odpowiedzi.</p>
           <div className="stage-list">
             {progress.stages.map((stage) => (
               <div className="stage" key={stage.stageId}>
                 <div><strong>Etap {stage.stageId}</strong><div className="muted">Próby: {stage.attempts} · najlepszy wynik: {stage.bestScore}%</div></div>
-                <span className={`badge ${stage.status === "PASSED" ? "badge-passed" : stage.status === "IN_PROGRESS" ? "badge-current" : "badge-locked"}`}>
-                  {stage.status === "PASSED" ? "zaliczony" : stage.status === "IN_PROGRESS" ? "aktualny" : "zablokowany"}
-                </span>
+                <div className="actions" style={{ marginTop: 0 }}>
+                  <span className={`badge ${stage.status === "PASSED" ? "badge-passed" : stage.status === "IN_PROGRESS" ? "badge-current" : "badge-locked"}`}>
+                    {stage.status === "PASSED" ? "zaliczony" : stage.status === "IN_PROGRESS" ? "aktualny" : "zablokowany"}
+                  </span>
+                  {stage.stageId === 1 && stage.status !== "LOCKED" ? <Link className="btn" href={`/student/stage/${stage.stageId}`}>{stage.status === "PASSED" ? "Powtórz" : "Rozpocznij"}</Link> : null}
+                </div>
               </div>
             ))}
           </div>
