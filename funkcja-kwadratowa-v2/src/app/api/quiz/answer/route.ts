@@ -1,7 +1,7 @@
 import { requireAppUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { getStudentProgress } from "@/lib/progress";
-import { isAnswerCorrect } from "@/features/quadratic/server/stage1";
+import { isAnswerCorrect } from "@/features/quadratic/server";
 
 export async function POST(request: Request) {
   const user = await requireAppUser();
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   if (!sessionId || !questionId) return Response.json({ error: "Brak identyfikatora sesji lub pytania." }, { status: 400 });
 
   const rows = await sql`
-    select q.id, q.question_type, q.correct_answer, q.solution, q.answered_at
+    select q.id, q.question_type, q.correct_answer, q.solution, q.answered_at, s.stage_id
     from quiz_session_questions q
     join quiz_sessions s on s.id = q.session_id
     where q.id = ${questionId}
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
   const question = rows[0];
   if (question.answered_at) return Response.json({ error: "Na to pytanie już udzielono odpowiedzi." }, { status: 409 });
 
+  const stageId = Number(question.stage_id);
   const type = String(question.question_type) as "input" | "choice";
   const correct = isAnswerCorrect(type, answer, String(question.correct_answer));
 
@@ -61,7 +62,6 @@ export async function POST(request: Request) {
     `;
 
     if (claimed.length) {
-      const stageId = Number(claimed[0].stage_id);
       const attemptRows = await sql`
         insert into quiz_attempts (student_user_id, stage_id, score, max_score)
         values (${user.id}, ${stageId}, ${score}, ${total})
@@ -81,14 +81,14 @@ export async function POST(request: Request) {
         order by ordinal
       `;
 
-      passed = score === total;
+      const isPerfect = score === total;
       const percent = Math.round((score * 100) / total);
       await sql`
         insert into student_progress (
           student_user_id, stage_id, status, best_score, attempts, passed_at, last_activity
         ) values (
-          ${user.id}, ${stageId}, ${passed ? "PASSED" : "IN_PROGRESS"}, ${percent}, 1,
-          ${passed ? new Date().toISOString() : null}, now()
+          ${user.id}, ${stageId}, ${isPerfect ? "PASSED" : "IN_PROGRESS"}, ${percent}, 1,
+          ${isPerfect ? new Date().toISOString() : null}, now()
         )
         on conflict (student_user_id, stage_id) do update
         set attempts = student_progress.attempts + 1,
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
     }
 
     const progress = await getStudentProgress(user.id);
-    passed = progress.passedStages.includes(1);
+    passed = progress.passedStages.includes(stageId);
     currentLevel = progress.currentLevel;
   }
 
