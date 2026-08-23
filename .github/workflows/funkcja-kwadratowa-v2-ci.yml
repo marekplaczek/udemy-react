@@ -6,6 +6,11 @@ on:
     paths:
       - "funkcja-kwadratowa-v2/**"
       - ".github/workflows/funkcja-kwadratowa-v2-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "funkcja-kwadratowa-v2/**"
+      - ".github/workflows/funkcja-kwadratowa-v2-ci.yml"
   workflow_dispatch:
 
 jobs:
