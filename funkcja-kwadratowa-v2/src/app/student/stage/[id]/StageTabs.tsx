@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { StageContent } from "@/features/quadratic/content";
+import Parabola, { formatQuadratic } from "@/features/quadratic/Parabola";
 import QuizClient from "./QuizClient";
 
 export default function StageTabs({ stage }: { stage: StageContent }) {
@@ -16,6 +17,13 @@ export default function StageTabs({ stage }: { stage: StageContent }) {
 
       {tab === "theory" ? (
         <section className="card theory-card">
+          <div className="parabola-card">
+            <Parabola {...stage.demo} />
+            <div className="parabola-caption">
+              Wykres poglądowy: <strong>f(x) = {formatQuadratic(stage.demo.a, stage.demo.b, stage.demo.c)}</strong>. Pomarańczowy punkt oznacza wierzchołek, a zaznaczone punkty na osi OX — miejsca zerowe.
+            </div>
+          </div>
+
           <p className="theory-intro">{stage.intro}</p>
           {stage.formulas.map((formula) => <div className="formula" key={formula}>{formula}</div>)}
           <h2 className="theory-heading">Najważniejsze zasady</h2>
