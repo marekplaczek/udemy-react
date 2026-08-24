@@ -4,15 +4,17 @@ import { useState } from "react";
 import type { StageContent } from "@/features/quadratic/content";
 import Parabola, { formatQuadratic } from "@/features/quadratic/Parabola";
 import QuizClient from "./QuizClient";
+import AiTutorClient from "./AiTutorClient";
 
 export default function StageTabs({ stage }: { stage: StageContent }) {
-  const [tab, setTab] = useState<"theory" | "quiz">("theory");
+  const [tab, setTab] = useState<"theory" | "quiz" | "ai">("theory");
 
   return (
     <>
-      <div className="tabs" role="tablist" aria-label="Materiały etapu">
+      <div className="tabs tabs-3" role="tablist" aria-label="Materiały etapu">
         <button className={`tab ${tab === "theory" ? "tab-active" : ""}`} onClick={() => setTab("theory")}>Teoria</button>
         <button className={`tab ${tab === "quiz" ? "tab-active" : ""}`} onClick={() => setTab("quiz")}>Quiz — wymagane 100%</button>
+        <button className={`tab ${tab === "ai" ? "tab-active" : ""}`} onClick={() => setTab("ai")}>Tutor AI</button>
       </div>
 
       {tab === "theory" ? (
@@ -32,7 +34,11 @@ export default function StageTabs({ stage }: { stage: StageContent }) {
           {stage.example ? <div className="example"><strong>Przykład.</strong> {stage.example}</div> : null}
           <button className="btn btn-primary full-btn" onClick={() => setTab("quiz")}>Przejdź do quizu</button>
         </section>
-      ) : <QuizClient stageId={stage.id} />}
+      ) : tab === "quiz" ? (
+        <QuizClient stageId={stage.id} />
+      ) : (
+        <AiTutorClient stageId={stage.id} />
+      )}
     </>
   );
 }
