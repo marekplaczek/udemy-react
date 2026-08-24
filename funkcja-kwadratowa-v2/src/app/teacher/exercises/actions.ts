@@ -34,6 +34,6 @@ export async function reviewExercise(formData: FormData) {
   `;
 
   revalidatePath("/teacher/exercises");
-  revalidatePath(`/teacher/exercises/${id}`);
-  redirect(`/teacher/exercises/${id}?saved=1`);
+  revalidatePath("/teacher/exercise");
+  redirect(`/teacher/exercise?id=${id}&saved=1`);
 }
