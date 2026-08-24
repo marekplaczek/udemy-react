@@ -117,7 +117,7 @@ export default async function ExerciseBankPage({ searchParams }: { searchParams:
                   <td>{item.pageNumber ?? "—"}</td>
                   <td>{item.verified ? <span className="badge badge-passed">zweryfikowane</span> : <span className="badge badge-review">OCR</span>}</td>
                   <td className="exercise-text-cell">{excerpt(item.text)}</td>
-                  <td><Link className="btn" href={`/teacher/exercises/${item.id}`}>Otwórz</Link></td>
+                  <td><Link className="btn" href={`/teacher/exercise?id=${item.id}`}>Otwórz</Link></td>
                 </tr>
               ))}
             </tbody>
