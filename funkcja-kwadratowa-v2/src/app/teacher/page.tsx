@@ -23,7 +23,7 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
       <header className="topbar">
         <div className="topbar-inner">
           <div className="brand"><small>Panel nauczyciela</small><strong>{teacher.display_name}</strong></div>
-          <div className="actions" style={{ marginTop: 0 }}><Link className="btn" href="/student">Panel ucznia</Link><Link className="btn" href="/auth/sign-out">Wyloguj</Link></div>
+          <div className="actions" style={{ marginTop: 0 }}><Link className="btn" href="/teacher/exercises">Bank zadań</Link><Link className="btn" href="/student">Panel ucznia</Link><Link className="btn" href="/auth/sign-out">Wyloguj</Link></div>
         </div>
       </header>
       <main className="shell">
