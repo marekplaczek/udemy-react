@@ -48,6 +48,7 @@ th { color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing:
 .section-title { font: 700 27px Georgia, serif; margin: 0 0 8px; }
 .empty { padding: 28px; border: 1px dashed #cbd5e1; border-radius: 14px; color: #64748b; background: #fff; }
 .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: #e2e8f0; border-radius: 12px; padding: 4px; margin-bottom: 18px; }
+.tabs-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .tab { border: 0; background: transparent; border-radius: 9px; padding: 11px 14px; color: #475569; font-weight: 700; cursor: pointer; }
 .tab-active { background: white; color: #4c1d95; box-shadow: 0 1px 2px rgb(15 23 42 / .08); }
 .theory-card { line-height: 1.65; }
@@ -85,8 +86,29 @@ th { color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing:
 .ocr-source { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; color: #334155; font: 14px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .checkbox-row { grid-template-columns: auto 1fr !important; align-items: center; gap: 10px !important; font-weight: 600 !important; }
 .checkbox-row input { width: 18px; height: 18px; margin: 0; }
+.ai-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .85fr); gap: 16px; align-items: start; }
+.ai-panel { min-width: 0; }
+.ai-heading-row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.ai-panel .theory-heading { margin: 10px 0 6px; }
+.ai-description { margin: 0 0 18px; line-height: 1.55; }
+.ai-field { display: grid; gap: 6px; color: #475569; font-size: 13px; font-weight: 700; }
+.ai-field input, .ai-form textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; background: white; color: #0f172a; }
+.ai-form { display: grid; gap: 12px; margin-top: 14px; }
+.ai-form textarea { resize: vertical; min-height: 96px; line-height: 1.5; }
+.ai-chat { display: grid; gap: 10px; margin-top: 16px; max-height: 480px; overflow-y: auto; padding-right: 2px; }
+.ai-empty { padding: 18px; font-size: 14px; line-height: 1.5; }
+.ai-message { border-radius: 12px; padding: 12px 14px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ai-message strong { display: block; margin-bottom: 5px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.ai-message-user { margin-left: 8%; background: #f5f3ff; border: 1px solid #ede9fe; }
+.ai-message-assistant { margin-right: 8%; background: #f8fafc; border: 1px solid #e2e8f0; }
+.ai-error { margin-top: 0; background: #fef2f2; border-left-color: #ef4444; color: #991b1b; }
+.ai-file-note { font-size: 12px; line-height: 1.4; }
+.ai-review { margin-top: 18px; padding: 16px; border: 1px solid #ddd6fe; border-radius: 12px; background: #faf5ff; }
+.ai-review h3 { margin: 0 0 10px; font: 700 18px Georgia, serif; color: #3b0764; }
+.ai-review > div { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; color: #334155; }
 @media (max-width: 900px) {
   .exercise-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ai-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
@@ -98,4 +120,6 @@ th { color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing:
   .parabola-caption { font-size: 12px; }
   .exercise-filters { grid-template-columns: 1fr; }
   .exercise-bank-summary { align-items: flex-start; flex-direction: column; }
+  .tabs-3 { grid-template-columns: 1fr; }
+  .ai-message-user, .ai-message-assistant { margin-left: 0; margin-right: 0; }
 }
