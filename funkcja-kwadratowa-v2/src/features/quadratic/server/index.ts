@@ -1,4 +1,4 @@
-import { answerToStorage, buildStage1Quiz, isAnswerCorrect } from "./stage1";
+import { buildStage1Quiz } from "./stage1";
 import { buildStage2Quiz } from "./stage2";
 import { buildStage3Quiz } from "./stage3";
 import { buildStage4Quiz } from "./stage4";
@@ -6,6 +6,7 @@ import { buildStage5Quiz } from "./stage5";
 import { buildStage6Quiz } from "./stage6";
 import { buildStage7Quiz } from "./stage7";
 import { buildBankQuizForStage, type QuizQuestion } from "./bank";
+import { answerToStorage, isAnswerCorrect } from "./answer";
 
 export { answerToStorage, isAnswerCorrect };
 export type { QuizQuestion };
