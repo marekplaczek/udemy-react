@@ -89,7 +89,7 @@ function parseIntervalPiece(raw: string) {
 }
 
 function parseSetExpression(raw: string) {
-  let normalized = stripVariablePrefix(normalizeCommon(raw)).replace(/\+∞/g, "∞");
+  const normalized = stripVariablePrefix(normalizeCommon(raw)).replace(/\+∞/g, "∞");
   if (normalized === "∅" || normalized === "pusty") return ["∅"];
   if (normalized === "r") return ["r"];
 
