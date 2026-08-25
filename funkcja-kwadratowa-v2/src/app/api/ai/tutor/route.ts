@@ -74,6 +74,14 @@ export async function POST(request: Request) {
     .filter(Boolean)
     .join("\n");
 
+  const moduleContext = stage.modules.map((module) => [
+    `${module.title} (${module.sourceRange})`,
+    `Wzory: ${module.formulas.join("; ")}`,
+    `Umiejętności: ${module.bullets.join("; ")}`,
+    `Rozpoznanie zadania: ${module.recognize.join("; ")}`,
+    `Pułapki: ${module.pitfalls.join("; ")}`,
+  ].join("\n")).join("\n\n");
+
   const instructions = `Jesteś polskojęzycznym tutorem matematyki dla ucznia szkoły średniej. Pracujesz wyłącznie w kontekście rozdziału o funkcji kwadratowej.
 
 Zasady:
@@ -87,12 +95,15 @@ Zasady:
   const context = `AKTUALNY ETAP ${stage.id}: ${stage.title}
 ${stage.subtitle}
 
-Teoria etapu:
+Podsumowanie etapu:
 ${stage.intro}
 Wzory: ${stage.formulas.join("; ")}
 Zasady: ${stage.bullets.join("; ")}
 ${stage.note ? `Uwaga: ${stage.note}` : ""}
 ${stage.example ? `Przykład: ${stage.example}` : ""}
+
+MODUŁY TEORII POWIĄZANE Z BANKIEM ZADAŃ:
+${moduleContext}
 
 Kontekst zadania:
 ${exerciseContext}
