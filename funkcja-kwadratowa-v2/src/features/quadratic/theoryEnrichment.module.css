@@ -1,0 +1,167 @@
+.wrapper {
+  display: grid;
+  gap: 1.15rem;
+  margin-top: 1rem;
+}
+
+.section {
+  border-top: 1px solid var(--border, #e5e7eb);
+  padding-top: 1rem;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.sectionHeading h4 {
+  margin: 0.15rem 0 0;
+  font-size: 1.02rem;
+}
+
+.eyebrow {
+  color: var(--muted-foreground, #64748b);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.count {
+  min-width: 1.8rem;
+  height: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--muted, #f1f5f9);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.graphGrid,
+.workedGrid,
+.practiceGrid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.graphGrid {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.workedGrid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.graphCard,
+.workedCard,
+.practiceCard {
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 14px;
+  background: var(--card, #fff);
+}
+
+.graphCard {
+  overflow: hidden;
+  padding: 0.8rem;
+}
+
+.graphCard :global(.parabola-svg) {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 0.5rem 0;
+}
+
+.graphTitle {
+  font-weight: 800;
+}
+
+.graphFormula {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
+
+.graphCard p {
+  margin: 0.45rem 0 0;
+  color: var(--muted-foreground, #64748b);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.workedCard {
+  padding: 1rem;
+}
+
+.workedCard h5 {
+  margin: 0 0 0.65rem;
+  font-size: 0.98rem;
+}
+
+.task {
+  margin-bottom: 0.7rem;
+  line-height: 1.5;
+}
+
+.workedCard ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.workedCard li + li {
+  margin-top: 0.35rem;
+}
+
+.answer,
+.practiceAnswer {
+  margin-top: 0.8rem;
+  border-radius: 10px;
+  background: var(--muted, #f8fafc);
+  padding: 0.7rem 0.8rem;
+}
+
+.practiceCard {
+  overflow: hidden;
+}
+
+.practiceCard summary {
+  cursor: pointer;
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  list-style: none;
+}
+
+.practiceCard summary::-webkit-details-marker {
+  display: none;
+}
+
+.practiceCard[open] summary {
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.practiceIndex {
+  color: var(--muted-foreground, #64748b);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.practiceAnswer {
+  margin: 0;
+  border-radius: 0;
+}
+
+@media (max-width: 640px) {
+  .graphGrid,
+  .workedGrid {
+    grid-template-columns: 1fr;
+  }
+}
