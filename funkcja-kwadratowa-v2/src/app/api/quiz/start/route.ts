@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     returning id
   `;
   const sessionId = String(sessions[0].id);
-  const generated = buildQuizForStage(stageId, 6);
+  const generated = await buildQuizForStage(stageId, 6);
   const questions = [];
 
   for (let index = 0; index < generated.length; index++) {
@@ -52,6 +52,9 @@ export async function POST(request: Request) {
       expr: row.expression ? String(row.expression) : null,
       type: String(row.question_type),
       options: row.options ?? null,
+      source: question.source,
+      exerciseNumber: question.exerciseNumber ?? null,
+      module: question.module ?? null,
     });
   }
 
