@@ -35,10 +35,14 @@ function normalizeCommon(raw: string) {
     .replace(/[⟩〉]/g, "]")
     .replace(/\\cup/g, "∪")
     .replace(/\b(?:union|lub)\b/g, "∪")
-    .replace(/\binfinity\b|\binf\b/g, "∞")
+    .replace(/\b(?:infinity|inf|oo)\b/g, "∞")
     .replace(/\b(?:mathbb\{r\}|realne|rzeczywiste)\b/g, "r")
     .replace(/ℝ/g, "r")
     .replace(/\s+/g, "");
+}
+
+function stripVariablePrefix(raw: string) {
+  return raw.replace(/^[a-z][a-z0-9_]*∈/, "").replace(/^[a-z][a-z0-9_]*=/, "");
 }
 
 function canonicalAtom(raw: string) {
@@ -66,13 +70,8 @@ function parseMultipart(raw: string) {
   return result;
 }
 
-function parseFiniteSet(raw: string) {
-  const normalized = normalizeCommon(raw)
-    .replace(/^[a-z]\d*∈/, "")
-    .replace(/^x∈/, "");
-  if (normalized === "∅" || normalized === "pusty") return ["∅"];
-  if (normalized === "r") return ["r"];
-  const match = normalized.match(/^\{(.*)\}$/);
+function parseFiniteSetPiece(raw: string) {
+  const match = raw.match(/^\{(.*)\}$/);
   if (!match) return null;
   if (!match[1]) return [];
   return match[1]
@@ -81,22 +80,46 @@ function parseFiniteSet(raw: string) {
     .sort();
 }
 
-function parseIntervalUnion(raw: string) {
-  let normalized = normalizeCommon(raw)
-    .replace(/^x∈/, "")
-    .replace(/^x=/, "")
-    .replace(/\+∞/g, "∞");
+function parseIntervalPiece(raw: string) {
+  const match = raw.match(/^([\[(])(.+?)[;,]([^;,]+)([\])])$/);
+  if (!match) return null;
+  const [, leftBracket, left, right, rightBracket] = match;
+  return `${leftBracket}${canonicalAtom(left)};${canonicalAtom(right)}${rightBracket}`;
+}
 
-  if (!/[\[\(].*[\]\)]/.test(normalized)) return null;
-  const pieces = normalized.split("∪").filter(Boolean);
-  const intervals: string[] = [];
-  for (const piece of pieces) {
-    const match = piece.match(/^([\[(])(.+?)[;,]([^;,]+)([\])])$/);
-    if (!match) return null;
-    const [, leftBracket, left, right, rightBracket] = match;
-    intervals.push(`${leftBracket}${canonicalAtom(left)};${canonicalAtom(right)}${rightBracket}`);
+function parseSetExpression(raw: string) {
+  let normalized = stripVariablePrefix(normalizeCommon(raw)).replace(/\+∞/g, "∞");
+  if (normalized === "∅" || normalized === "pusty") return ["∅"];
+  if (normalized === "r") return ["r"];
+
+  const complement = normalized.match(/^r\\\{(.*)\}$/);
+  if (complement) {
+    const items = complement[1]
+      .split(/[;,]/)
+      .filter(Boolean)
+      .map(canonicalAtom)
+      .sort();
+    return [`r\\{${items.join(",")}}`];
   }
-  return intervals.sort();
+
+  const pieces = normalized.split("∪").filter(Boolean);
+  if (!pieces.length) return null;
+
+  const result: string[] = [];
+  for (const piece of pieces) {
+    const interval = parseIntervalPiece(piece);
+    if (interval) {
+      result.push(`i:${interval}`);
+      continue;
+    }
+    const finite = parseFiniteSetPiece(piece);
+    if (finite) {
+      result.push(`s:{${finite.join(",")}}`);
+      continue;
+    }
+    return null;
+  }
+  return result.sort();
 }
 
 function compareStructured(submitted: string, correct: string): boolean {
@@ -118,16 +141,8 @@ function compareStructured(submitted: string, correct: string): boolean {
       && Math.abs(actualNumeric - expectedNumeric) < 1e-6;
   }
 
-  const actualIntervals = parseIntervalUnion(submitted);
-  const expectedIntervals = parseIntervalUnion(correct);
-  if (actualIntervals || expectedIntervals) {
-    return Boolean(actualIntervals && expectedIntervals)
-      && actualIntervals!.length === expectedIntervals!.length
-      && actualIntervals!.every((value, index) => value === expectedIntervals![index]);
-  }
-
-  const actualSet = parseFiniteSet(submitted);
-  const expectedSet = parseFiniteSet(correct);
+  const actualSet = parseSetExpression(submitted);
+  const expectedSet = parseSetExpression(correct);
   if (actualSet || expectedSet) {
     return Boolean(actualSet && expectedSet)
       && actualSet!.length === expectedSet!.length
@@ -150,9 +165,9 @@ export function isAutoCheckableAnswer(answer: string) {
   const parts = parseMultipart(value);
   if (parts) return [...parts.values()].every(isAutoCheckableAnswer);
 
-  if (parseIntervalUnion(value) || parseFiniteSet(value)) return true;
+  if (parseSetExpression(value)) return true;
 
   // Krótkie odpowiedzi symboliczne (np. „a=2”, „x=−3”) można porównać
-  // po normalizacji. Długie opisy i dowody pozostają poza autooceną.
+  // po normalizacji. Długie opisy, wzory funkcji i dowody pozostają poza autooceną.
   return value.length <= 48 && !/[.!?]\s/.test(value);
 }
