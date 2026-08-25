@@ -29,8 +29,8 @@ function parseChoice(text: string, answer: string) {
 }
 
 function fromBankRow(row: BankRow): QuizQuestion | null {
-  const module = row.module_tag ?? undefined;
-  const skill = module ?? row.topic ?? "bank-zadan";
+  const moduleTag = row.module_tag ?? undefined;
+  const skill = moduleTag ?? row.topic ?? "bank-zadan";
   const solution = row.solution?.trim() || `Prawidłowa odpowiedź: ${row.answer}`;
 
   if (row.exercise_type === "CHOICE") {
@@ -46,7 +46,7 @@ function fromBankRow(row: BankRow): QuizQuestion | null {
       skill,
       source: "bank",
       exerciseNumber: row.exercise_number,
-      module,
+      module: moduleTag,
     };
   }
 
@@ -60,7 +60,7 @@ function fromBankRow(row: BankRow): QuizQuestion | null {
       skill,
       source: "bank",
       exerciseNumber: row.exercise_number,
-      module,
+      module: moduleTag,
     };
   }
 
