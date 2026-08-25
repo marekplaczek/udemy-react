@@ -35,6 +35,7 @@ function normalizeCommon(raw: string) {
     .replace(/[⟩〉]/g, "]")
     .replace(/\\cup/g, "∪")
     .replace(/\b(?:union|lub)\b/g, "∪")
+    .replace(/\s+u\s+/g, "∪")
     .replace(/\b(?:infinity|inf|oo)\b/g, "∞")
     .replace(/\b(?:mathbb\{r\}|realne|rzeczywiste)\b/g, "r")
     .replace(/ℝ/g, "r")
