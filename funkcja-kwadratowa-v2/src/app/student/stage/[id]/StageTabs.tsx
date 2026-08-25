@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { StageContent } from "@/features/quadratic/content";
 import Parabola, { formatQuadratic } from "@/features/quadratic/Parabola";
+import TheoryEnrichmentBlock from "@/features/quadratic/TheoryEnrichmentBlock";
 import QuizClient from "./QuizClient";
 import AiTutorClient from "./AiTutorClient";
 
@@ -75,6 +76,8 @@ export default function StageTabs({ stage }: { stage: StageContent }) {
                   <ul>{module.pitfalls.map((item) => <li key={item}>{item}</li>)}</ul>
                 </div>
                 {module.example ? <div className="example"><strong>Przykład.</strong> {module.example}</div> : null}
+
+                <TheoryEnrichmentBlock moduleId={module.id} />
               </article>
             ))}
           </div>
