@@ -27,11 +27,58 @@ export default function StageTabs({ stage }: { stage: StageContent }) {
           </div>
 
           <p className="theory-intro">{stage.intro}</p>
-          {stage.formulas.map((formula) => <div className="formula" key={formula}>{formula}</div>)}
-          <h2 className="theory-heading">Najważniejsze zasady</h2>
+          <div className="theory-stage-formulas">
+            {stage.formulas.map((formula) => <div className="formula" key={formula}>{formula}</div>)}
+          </div>
+          <h2 className="theory-heading">Najważniejsze zasady etapu</h2>
           <ul className="theory-list">{stage.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
           {stage.note ? <div className="note"><strong>Uwaga.</strong> {stage.note}</div> : null}
           {stage.example ? <div className="example"><strong>Przykład.</strong> {stage.example}</div> : null}
+
+          <div className="theory-modules-header">
+            <div>
+              <h2 className="theory-heading">Moduły tego etapu</h2>
+              <p className="muted">Zakres został dopasowany do rzeczywistych zadań z banku. Każdy moduł wskazuje numery zadań, które ćwiczą daną umiejętność.</p>
+            </div>
+            <span className="badge badge-current">{stage.modules.length} {stage.modules.length === 1 ? "moduł" : "moduły"}</span>
+          </div>
+
+          <div className="theory-modules">
+            {stage.modules.map((module, index) => (
+              <article className="theory-module" key={module.id} id={module.id.replace(":", "-")}>
+                <div className="theory-module-title-row">
+                  <div>
+                    <div className="theory-module-index">Moduł {index + 1}</div>
+                    <h3>{module.title}</h3>
+                  </div>
+                  <span className="theory-source-range">{module.sourceRange}</span>
+                </div>
+
+                <p>{module.intro}</p>
+                <div className="theory-module-formulas">
+                  {module.formulas.map((formula) => <div className="formula" key={formula}>{formula}</div>)}
+                </div>
+
+                <div className="theory-module-grid">
+                  <div>
+                    <h4>Co trzeba umieć</h4>
+                    <ul className="theory-list">{module.bullets.map((item) => <li key={item}>{item}</li>)}</ul>
+                  </div>
+                  <div>
+                    <h4>Jak rozpoznać ten typ zadania</h4>
+                    <ul className="theory-list">{module.recognize.map((item) => <li key={item}>{item}</li>)}</ul>
+                  </div>
+                </div>
+
+                <div className="note theory-pitfalls">
+                  <strong>Typowe pułapki.</strong>
+                  <ul>{module.pitfalls.map((item) => <li key={item}>{item}</li>)}</ul>
+                </div>
+                {module.example ? <div className="example"><strong>Przykład.</strong> {module.example}</div> : null}
+              </article>
+            ))}
+          </div>
+
           <button className="btn btn-primary full-btn" onClick={() => setTab("quiz")}>Przejdź do quizu</button>
         </section>
       ) : tab === "quiz" ? (
