@@ -1,11 +1,22 @@
 import Parabola, { formatQuadratic } from "./Parabola";
 import QuadraticCoefficientComparison from "./QuadraticCoefficientComparison";
 import { THEORY_ENRICHMENT } from "./theoryEnrichment";
+import { THEORY_ENRICHMENT_ADDITIONAL } from "./theoryEnrichmentAdditional";
 import styles from "./theoryEnrichment.module.css";
 
 export default function TheoryEnrichmentBlock({ moduleId }: { moduleId: string }) {
   const enrichment = THEORY_ENRICHMENT[moduleId];
   if (!enrichment) return null;
+
+  const additional = THEORY_ENRICHMENT_ADDITIONAL[moduleId];
+  const workedExamples = [
+    ...enrichment.workedExamples,
+    ...(additional?.workedExamples ?? []),
+  ];
+  const practice = [
+    ...enrichment.practice,
+    ...(additional?.practice ?? []),
+  ];
 
   return (
     <div className={styles.wrapper}>
@@ -38,10 +49,10 @@ export default function TheoryEnrichmentBlock({ moduleId }: { moduleId: string }
             <div className={styles.eyebrow}>Od treści do odpowiedzi</div>
             <h4>Przykłady rozwiązane krok po kroku</h4>
           </div>
-          <span className={styles.count}>{enrichment.workedExamples.length}</span>
+          <span className={styles.count}>{workedExamples.length}</span>
         </div>
         <div className={styles.workedGrid}>
-          {enrichment.workedExamples.map((example) => (
+          {workedExamples.map((example) => (
             <article className={styles.workedCard} key={`${moduleId}-${example.title}`}>
               <h5>{example.title}</h5>
               <div className={styles.task}><strong>Zadanie.</strong> {example.task}</div>
@@ -60,10 +71,10 @@ export default function TheoryEnrichmentBlock({ moduleId }: { moduleId: string }
             <div className={styles.eyebrow}>Sprawdź się</div>
             <h4>Krótkie zadania do samodzielnego rozwiązania</h4>
           </div>
-          <span className={styles.count}>{enrichment.practice.length}</span>
+          <span className={styles.count}>{practice.length}</span>
         </div>
         <div className={styles.practiceGrid}>
-          {enrichment.practice.map((item, index) => (
+          {practice.map((item, index) => (
             <details className={styles.practiceCard} key={`${moduleId}-practice-${index}`}>
               <summary>
                 <span className={styles.practiceIndex}>Zadanie {index + 1}</span>
