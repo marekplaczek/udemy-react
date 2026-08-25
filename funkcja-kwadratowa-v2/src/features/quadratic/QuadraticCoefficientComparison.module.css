@@ -1,0 +1,81 @@
+.card {
+  margin-top: 0.9rem;
+  border: 1px solid #ddd6fe;
+  border-radius: 14px;
+  background: #faf5ff;
+  padding: 1rem;
+}
+
+.title {
+  font-weight: 800;
+  color: #312e81;
+}
+
+.intro {
+  margin: 0.35rem 0 0.8rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+}
+
+.background { fill: #fff; }
+.grid { stroke: #e2e8f0; stroke-width: 1; }
+.axis { stroke: #64748b; stroke-width: 1.6; }
+.curve { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.curveWide { stroke: #0f766e; }
+.curveBase { stroke: #4c1d95; }
+.curveNarrow { stroke: #c2410c; }
+.curveNegative { stroke: #b91c1c; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  margin-top: 0.75rem;
+  color: #334155;
+  font-size: 0.88rem;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legendLine {
+  width: 28px;
+  height: 0;
+  border-top: 3px solid currentColor;
+}
+
+.legendLine.curveWide { color: #0f766e; }
+.legendLine.curveBase { color: #4c1d95; }
+.legendLine.curveNarrow { color: #c2410c; }
+.legendLine.curveNegative { color: #b91c1c; }
+
+.rules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.9rem;
+}
+
+.rules > div {
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 0.7rem 0.8rem;
+  color: #334155;
+}
+
+@media (max-width: 640px) {
+  .rules { grid-template-columns: 1fr; }
+}
