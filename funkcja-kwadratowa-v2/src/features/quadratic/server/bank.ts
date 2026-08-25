@@ -1,5 +1,6 @@
 import { sql } from "@/lib/db";
 import type { GeneratedQuestion } from "./stage1";
+import { isAutoCheckableAnswer } from "./answer";
 
 export type QuizQuestion = GeneratedQuestion & {
   source: "bank" | "generated";
@@ -27,12 +28,6 @@ function parseChoice(text: string, answer: string) {
   return { q: lines.slice(0, optionStart).join(" "), options };
 }
 
-function isNumericAnswer(answer: string) {
-  const normalized = answer.trim().replace(/−/g, "-").replace(/\s/g, "").replace(/,/g, ".");
-  if (/^-?\d+(?:\.\d+)?$/.test(normalized)) return true;
-  return /^-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?$/.test(normalized);
-}
-
 function fromBankRow(row: BankRow): QuizQuestion | null {
   const module = row.module_tag ?? undefined;
   const skill = module ?? row.topic ?? "bank-zadan";
@@ -55,7 +50,7 @@ function fromBankRow(row: BankRow): QuizQuestion | null {
     };
   }
 
-  if (row.exercise_type === "OPEN" && isNumericAnswer(row.answer)) {
+  if ((row.exercise_type === "OPEN" || row.exercise_type === "MULTIPART") && isAutoCheckableAnswer(row.answer)) {
     return {
       key: `bank:${row.id}`,
       q: row.text.trim(),
@@ -73,7 +68,7 @@ function fromBankRow(row: BankRow): QuizQuestion | null {
 }
 
 export async function buildBankQuizForStage(stageId: number, count: number) {
-  const candidateLimit = Math.max(24, count * 8);
+  const candidateLimit = Math.max(32, count * 10);
   const rows = await sql`
     select
       e.id,
@@ -96,7 +91,7 @@ export async function buildBankQuizForStage(stageId: number, count: number) {
       and e.is_active = true
       and e.answer is not null
       and btrim(e.answer) <> ''
-      and e.exercise_type in ('CHOICE', 'OPEN')
+      and e.exercise_type in ('CHOICE', 'OPEN', 'MULTIPART')
     order by random()
     limit ${candidateLimit}
   ` as BankRow[];
