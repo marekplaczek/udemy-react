@@ -24,6 +24,8 @@ jobs:
       NEON_AUTH_BASE_URL: https://example.com/auth
       NEON_AUTH_COOKIE_SECRET: ci-only-cookie-secret-at-least-32-characters-long
       TEACHER_EMAILS: ""
+      OPENAI_API_KEY: sk-ci-placeholder
+      OPENAI_MODEL: gpt-5.6-terra
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,6 +35,10 @@ jobs:
         run: npm install
       - name: Lint
         run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Answer parser tests
+        run: npm run test:answers
       - name: Build
         run: npm run build
       - name: Package source for deployment verification
