@@ -1,4 +1,5 @@
 import Parabola, { formatQuadratic } from "./Parabola";
+import QuadraticCoefficientComparison from "./QuadraticCoefficientComparison";
 import { THEORY_ENRICHMENT } from "./theoryEnrichment";
 import styles from "./theoryEnrichment.module.css";
 
@@ -27,6 +28,7 @@ export default function TheoryEnrichmentBlock({ moduleId }: { moduleId: string }
               </article>
             ))}
           </div>
+          {moduleId === "module:01-general-form" ? <QuadraticCoefficientComparison /> : null}
         </section>
       ) : null}
 
