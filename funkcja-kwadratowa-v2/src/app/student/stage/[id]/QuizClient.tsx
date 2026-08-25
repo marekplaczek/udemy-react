@@ -10,6 +10,9 @@ type Question = {
   expr: string | null;
   type: "input" | "choice";
   options: string[] | null;
+  source?: "bank" | "generated";
+  exerciseNumber?: string | null;
+  module?: string | null;
 };
 
 type StartResponse = { sessionId: string; stageId: number; questions: Question[]; error?: string };
@@ -57,7 +60,7 @@ export default function QuizClient({ stageId }: { stageId: number }) {
     return () => { cancelled = true; };
   }, [stageId]);
 
-  if (loading) return <div className="card">Losuję zestaw zadań…</div>;
+  if (loading) return <div className="card">Losuję zestaw zadań z modułów etapu…</div>;
   if (error) return <div className="card"><strong>Nie udało się uruchomić quizu.</strong><p className="muted">{error}</p><Link className="btn" href="/student">Wróć</Link></div>;
   const question = questions[index];
   if (!question) return <div className="card">Brak pytania.</div>;
@@ -92,7 +95,7 @@ export default function QuizClient({ stageId }: { stageId: number }) {
       <div className="card" style={{ textAlign: "center" }}>
         <div className="kpi">{feedback.score}/{feedback.maxScore}</div>
         <h2 className="section-title">{feedback.passed ? "Etap zaliczony" : "Potrzebne jest 100%"}</h2>
-        <p className="muted">{feedback.passed ? `Serwer odblokował poziom ${feedback.currentLevel ?? 1}.` : "Spróbuj ponownie — nowy zestaw zostanie wylosowany."}</p>
+        <p className="muted">{feedback.passed ? `Serwer odblokował poziom ${feedback.currentLevel ?? 1}.` : "Spróbuj ponownie — nowy zestaw zostanie wylosowany z modułów etapu."}</p>
         <div className="actions" style={{ justifyContent: "center" }}>
           <Link className="btn btn-primary" href="/student">Panel ucznia</Link>
           {!feedback.passed ? <button className="btn" onClick={() => window.location.reload()}>Nowy zestaw</button> : null}
@@ -104,6 +107,9 @@ export default function QuizClient({ stageId }: { stageId: number }) {
   return (
     <div className="card">
       <div className="muted">Zadanie {index + 1}/{questions.length}</div>
+      <div className={`quiz-source ${question.source === "bank" ? "quiz-source-bank" : ""}`}>
+        {question.source === "bank" ? `Z banku zadań${question.exerciseNumber ? ` • ${question.exerciseNumber}` : ""}` : "Zadanie generowane"}
+      </div>
       <h2 style={{ fontFamily: "Georgia, serif", lineHeight: 1.4 }}>{question.q}</h2>
       {question.expr ? <div style={{ padding: 16, background: "#f5f3ff", borderRadius: 12, fontFamily: "Georgia, serif", fontSize: 20, textAlign: "center", marginBottom: 16 }}>{question.expr}</div> : null}
 
